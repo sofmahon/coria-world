@@ -1,0 +1,8 @@
+{
+  // Tells Cloudflare: this is a static site — just serve these files as they are.
+  "name": "coria-world",
+  "compatibility_date": "2026-06-12",
+  "assets": {
+    "directory": "./"
+  }
+}

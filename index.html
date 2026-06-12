@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Coria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#EBE0CA; --paper:#F3EBD8; --ink:#2C2419; --muted:#6E6048;
+    --ember:#B5531E; --rule:#D6C7A8; --ember-glow:transparent;
+  }
+  [data-theme="dark"] {
+    --bg:#14110C; --paper:#1D1812; --ink:#E9E0CC; --muted:#9C8E76;
+    --ember:#EE8A3E; --rule:#2E261B; --ember-glow:rgba(238,138,62,0.45);
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+    font-family:'Spectral',Georgia,serif;
+    display:flex; flex-direction:column;
+    transition:background .5s ease,color .5s ease; -webkit-font-smoothing:antialiased;
+  }
+  .topbar { display:flex; justify-content:flex-end; padding:14px 16px; }
+  .toggle {
+    display:inline-flex; align-items:center; gap:8px;
+    border:1px solid var(--rule); background:var(--paper); color:var(--muted);
+    border-radius:999px; padding:7px 12px; cursor:pointer;
+    font-family:'Spectral',serif; font-size:.82rem; letter-spacing:.04em; line-height:1;
+    transition:border-color .3s ease,color .3s ease;
+  }
+  .toggle:hover { border-color:var(--ember); color:var(--ember); }
+  .toggle:focus-visible { outline:2px solid var(--ember); outline-offset:2px; }
+  .toggle .dot { width:13px; height:13px; border-radius:50%; background:var(--ember);
+    box-shadow:0 0 0 var(--ember-glow); transition:box-shadow .4s ease; }
+  [data-theme="dark"] .toggle .dot { box-shadow:0 0 12px 1px var(--ember-glow); }
+  .toggle .label-dark { display:none; }
+  [data-theme="dark"] .toggle .label-dark { display:inline; }
+  [data-theme="dark"] .toggle .label-light { display:none; }
+
+  main {
+    flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; padding:30px 26px 60px; max-width:34rem; margin:0 auto;
+  }
+  .eyebrow {
+    font-size:.78rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 18px;
+  }
+  h1 {
+    font-family:'Fraunces',serif; font-weight:600;
+    font-size:clamp(3.6rem,22vw,6rem); line-height:.95; letter-spacing:-.01em;
+    margin:0; color:var(--ember);
+    text-shadow:0 0 0 transparent; transition:text-shadow .5s ease;
+  }
+  [data-theme="dark"] h1 { text-shadow:0 0 28px var(--ember-glow); }
+  .series {
+    font-family:'Fraunces',serif; font-style:italic; color:var(--muted);
+    font-size:1.15rem; margin:14px 0 0;
+  }
+  .series .ember-word { color:var(--ember); font-style:normal; }
+  [data-theme="dark"] .series .ember-word { text-shadow:0 0 9px var(--ember-glow); }
+  .tagline {
+    font-size:1.12rem; line-height:1.7; color:var(--ink); margin:26px 0 0; max-width:26rem;
+  }
+  .ember-dot {
+    width:7px; height:7px; border-radius:50%; background:var(--ember); margin:30px auto;
+    box-shadow:0 0 0 var(--ember-glow); transition:box-shadow .4s ease;
+  }
+  [data-theme="dark"] .ember-dot { box-shadow:0 0 14px 3px var(--ember-glow); }
+  .enter {
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:'Fraunces',serif; font-size:1.1rem; color:#fff; background:var(--ember);
+    text-decoration:none; padding:14px 30px; border-radius:999px;
+    box-shadow:0 0 0 var(--ember-glow); transition:box-shadow .4s ease, transform .15s ease;
+  }
+  .enter:hover { transform:translateY(-1px); }
+  [data-theme="dark"] .enter { box-shadow:0 0 20px 1px var(--ember-glow); }
+  .enter:focus-visible { outline:2px solid var(--ember); outline-offset:3px; }
+  footer { text-align:center; color:var(--muted); font-size:.82rem; padding:20px; }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <button class="toggle" id="themeToggle" aria-label="Switch color theme">
+      <span class="dot"></span><span class="label-light">Light</span><span class="label-dark">Dark</span>
+    </button>
+  </div>
+
+  <main>
+    <p class="eyebrow">Enter the world</p>
+    <h1>Coria</h1>
+    <p class="series">rem<span class="ember-word">EMBER</span> · Book One</p>
+    <p class="tagline">— your one-line invitation into the world goes here; a sentence that makes a stranger want to step inside —</p>
+    <div class="ember-dot"></div>
+    <a class="enter" href="contents.html">Begin reading →</a>
+  </main>
+
+  <footer>coria.world</footer>
+
+<script>
+  var root = document.documentElement;
+  document.getElementById('themeToggle').addEventListener('click', function () {
+    root.setAttribute('data-theme', root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+</script>
+</body>
+</html>
