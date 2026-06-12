@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>remEMBER — Chapter One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* LIGHT — warm parchment / Kindle sepia */
+    --bg:        #EBE0CA;
+    --paper:     #F3EBD8;
+    --ink:       #2C2419;
+    --muted:     #6E6048;
+    --ember:     #B5531E;
+    --rule:      #D6C7A8;
+    --ember-glow: transparent;
+    --player-bg: #F3EBD8;
+    --reading:   1.18rem;
+  }
+  [data-theme="dark"] {
+    /* DARK — banked midnight, embers glowing */
+    --bg:        #14110C;
+    --paper:     #1D1812;
+    --ink:       #E9E0CC;
+    --muted:     #9C8E76;
+    --ember:     #EE8A3E;
+    --rule:      #2E261B;
+    --ember-glow: rgba(238,138,62,0.45);
+    --player-bg: #1D1812;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Spectral', Georgia, serif;
+    font-size: 1.18rem;
+    line-height: 1.75;
+    transition: background .5s ease, color .5s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Theme toggle ---------- */
+  .toggle-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px 10px;
+    background: linear-gradient(to bottom, var(--bg) 78%, transparent);
+  }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-size: 0.95rem;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color .3s ease;
+  }
+  .brand:hover { color: var(--ember); }
+  .brand .ember-word { color: var(--ember); }
+  [data-theme="dark"] .brand .ember-word { text-shadow: 0 0 9px var(--ember-glow); }
+  .nav-right { display: inline-flex; align-items: center; gap: 9px; }
+  .chapters-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 7px 13px;
+    cursor: pointer;
+    font-family: 'Spectral', serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    transition: border-color .3s ease, color .3s ease;
+  }
+  .chapters-btn:hover { border-color: var(--ember); color: var(--ember); }
+  .chapters-btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+  /* reading size control */
+  .fontsize {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .fontsize button {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Fraunces', serif;
+    line-height: 1;
+    padding: 6px 11px;
+    transition: color .25s ease, background .2s ease;
+  }
+  .fontsize button.smaller { font-size: 0.78rem; }
+  .fontsize button.larger  { font-size: 1.02rem; }
+  .fontsize button:first-child { border-right: 1px solid var(--rule); }
+  .fontsize button:hover { color: var(--ember); background: var(--bg); }
+  .fontsize button:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+  /* keep the header tidy on narrow phones */
+  @media (max-width: 400px) {
+    .chapters-btn .btn-text { display: none; }
+  }
+
+  /* ---------- Chapters panel ---------- */
+  .chapters-panel {
+    position: fixed;
+    top: 56px;
+    left: 0; right: 0;
+    z-index: 9;
+    max-width: 38rem;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+    transform: translateY(-12px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .28s ease, transform .28s ease, visibility .28s;
+  }
+  .chapters-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
+  .chapters-panel .panel-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 12px 6px;
+  }
+  .chapters-panel a {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    font-family: 'Fraunces', serif;
+    transition: background .2s ease;
+  }
+  .chapters-panel a:hover { background: var(--bg); }
+  .chapters-panel a .num {
+    font-style: italic;
+    color: var(--ember);
+    font-size: 0.85rem;
+    min-width: 1.6rem;
+  }
+  .chapters-panel a.current { color: var(--ember); }
+  .chapters-panel a.current::after {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--ember);
+    margin-left: auto;
+    align-self: center;
+    box-shadow: 0 0 0 var(--ember-glow);
+  }
+  [data-theme="dark"] .chapters-panel a.current::after { box-shadow: 0 0 10px 2px var(--ember-glow); }
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 7px 9px;
+    cursor: pointer;
+    font-family: 'Spectral', serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    transition: border-color .3s ease, color .3s ease;
+  }
+  .toggle:hover { border-color: var(--ember); color: var(--ember); }
+  .toggle:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+  .toggle .dot {
+    width: 13px; height: 13px; border-radius: 50%;
+    background: var(--ember);
+    box-shadow: 0 0 0 var(--ember-glow);
+    transition: box-shadow .4s ease;
+  }
+  [data-theme="dark"] .toggle .dot { box-shadow: 0 0 12px 1px var(--ember-glow); }
+  .toggle .label-dark { display: none; }
+  [data-theme="dark"] .toggle .label-dark { display: inline; }
+  [data-theme="dark"] .toggle .label-light { display: none; }
+
+  /* ---------- Reading column ---------- */
+  main {
+    max-width: 38rem;
+    margin: 0 auto;
+    padding: 8px 22px 80px;
+  }
+
+  .eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 18px 0 0;
+  }
+  .eyebrow .ember-word {
+    color: var(--ember);
+    text-shadow: 0 0 0 transparent;
+    transition: text-shadow .4s ease;
+  }
+  [data-theme="dark"] .eyebrow .ember-word { text-shadow: 0 0 10px var(--ember-glow); }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(2.4rem, 11vw, 3.6rem);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    margin: 10px 0 6px;
+  }
+  .chapter-tag {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 1.15rem;
+    margin: 0 0 26px;
+  }
+
+  .ember-rule {
+    border: none;
+    height: 1px;
+    background: var(--rule);
+    margin: 0 0 28px;
+    position: relative;
+  }
+  .ember-rule::before {
+    content: "";
+    position: absolute;
+    left: 0; top: -3px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ember);
+    box-shadow: 0 0 0 var(--ember-glow);
+    transition: box-shadow .4s ease;
+  }
+  [data-theme="dark"] .ember-rule::before { box-shadow: 0 0 12px 2px var(--ember-glow); }
+
+  /* ---------- Song player ---------- */
+  .player {
+    background: var(--player-bg);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 0 0 26px;
+  }
+  .play-btn {
+    flex: 0 0 auto;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--ember);
+    color: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 0 0 var(--ember-glow);
+    transition: box-shadow .4s ease, transform .15s ease;
+  }
+  .play-btn:active { transform: scale(0.94); }
+  .play-btn:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+  [data-theme="dark"] .play-btn { box-shadow: 0 0 16px 1px var(--ember-glow); }
+  .play-btn.playing { animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 14px 1px var(--ember-glow); }
+    50%     { box-shadow: 0 0 22px 5px var(--ember-glow); }
+  }
+  .play-btn svg { width: 18px; height: 18px; display: block; }
+  .track-meta { min-width: 0; flex: 1; }
+  .track-meta .song {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  .track-meta .kind {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 2px 0 9px;
+  }
+  .bars { display: flex; align-items: flex-end; gap: 3px; height: 18px; }
+  .bars span {
+    width: 3px;
+    background: var(--ember);
+    border-radius: 2px;
+    opacity: 0.55;
+  }
+  .playing ~ .track-meta .bars span { animation: dance 1.1s ease-in-out infinite; }
+  @keyframes dance { 0%,100%{ height: 5px; } 50%{ height: 17px; } }
+
+  /* ---------- Key-moment video slot ---------- */
+  .scene {
+    aspect-ratio: 16 / 10;
+    border: 1px dashed var(--rule);
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    color: var(--muted);
+    margin: 0 0 36px;
+    gap: 6px;
+    padding: 20px;
+  }
+  .scene .tri {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--ember);
+    color: var(--ember);
+    display: grid; place-items: center;
+    margin-bottom: 8px;
+  }
+  .scene .tri svg { width: 16px; height: 16px; }
+  .scene small { font-size: 0.8rem; letter-spacing: 0.05em; }
+
+  /* ---------- Chapter prose ---------- */
+  .prose { font-size: var(--reading); transition: font-size .2s ease; }
+  .prose p { margin: 0 0 1.35em; }
+  .prose p:first-of-type::first-letter {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    float: left;
+    font-size: 2.9em;
+    line-height: 0.78;
+    padding: 6px 10px 0 0;
+    color: var(--ember);
+    text-shadow: 0 0 0 transparent;
+    transition: text-shadow .4s ease;
+  }
+  [data-theme="dark"] .prose p:first-of-type::first-letter { text-shadow: 0 0 14px var(--ember-glow); }
+  .placeholder-note {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    border-top: 1px solid var(--rule);
+    margin-top: 30px;
+    padding-top: 18px;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    text-align: center;
+    margin-top: 46px;
+  }
+  .next {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ember);
+    text-decoration: none;
+    border: 1px solid var(--rule);
+    padding: 11px 22px;
+    border-radius: 999px;
+    transition: border-color .3s ease;
+  }
+  .next:hover { border-color: var(--ember); }
+
+  @media (min-width: 720px) {
+    body { font-size: 1.22rem; }
+    main { padding-top: 18px; }
+    :root { --reading: 1.22rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="toggle-wrap">
+    <a class="brand" href="#">← <span class="ember-word">Coria</span></a>
+    <div class="nav-right">
+      <a class="chapters-btn" href="contents.html">≡ <span class="btn-text">Chapters</span></a>
+      <div class="fontsize" role="group" aria-label="Reading size">
+        <button class="smaller" id="fontDown" aria-label="Smaller text">A−</button>
+        <button class="larger" id="fontUp" aria-label="Larger text">A+</button>
+      </div>
+      <button class="toggle" id="themeToggle" aria-label="Switch color theme">
+        <span class="dot"></span>
+        <span class="label-light">Light</span>
+        <span class="label-dark">Dark</span>
+      </button>
+    </div>
+  </div>
+
+  <main>
+    <p class="eyebrow">rem<span class="ember-word">EMBER</span> &nbsp;·&nbsp; Book One</p>
+    <h1>Chapter One</h1>
+    <p class="chapter-tag">— the chapter title goes here —</p>
+    <hr class="ember-rule" />
+
+    <!-- SONG PLAYER (mock — real audio / Suno embed drops in here) -->
+    <div class="player">
+      <button class="play-btn" id="playBtn" aria-label="Play Blood Reigns">
+        <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <div class="track-meta">
+        <p class="song">Blood Reigns</p>
+        <p class="kind">Chapter Song</p>
+        <div class="bars">
+          <span style="height:6px"></span><span style="height:14px"></span>
+          <span style="height:9px"></span><span style="height:17px"></span>
+          <span style="height:11px"></span><span style="height:7px"></span>
+          <span style="height:15px"></span><span style="height:10px"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KEY-MOMENT VIDEO SLOT -->
+    <div class="scene">
+      <div class="tri"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      <strong style="font-family:'Fraunces',serif;">The key moment</strong>
+      <small>your scene video lives here</small>
+    </div>
+
+    <!-- CHAPTER TEXT (placeholder — paste your real Chapter One over this) -->
+    <div class="prose">
+      <p>This is placeholder text, here only so you can feel the shape of the page. When you drop your real Chapter One in, your words will carry this same warmth, this same easy line, whether a reader is curled into the parchment or sunk into the dark.</p>
+      <p>Notice how the column never runs too wide — that's on purpose. A line of reading should fit the eye the way it fits a printed book, so nothing tires you, page after page, chapter after chapter.</p>
+      <p>The song sits at the top, waiting. The scene waits beneath it. And then the words begin, and the reader chooses the light they read by — banked and glowing, or warm as old paper. That choice is theirs now. You built them a room and let them set the lamp.</p>
+      <p>Swap every word of this for your own. The mold stays. Only the writing changes.</p>
+      <p class="placeholder-note">↑ placeholder prose — your Chapter One replaces all of this</p>
+    </div>
+
+    <footer>
+      <a class="next" href="#">Chapter Two →</a>
+    </footer>
+  </main>
+
+<script>
+  // Reading size — nudges only the chapter prose, with sane min/max.
+  // In the real Astro build this remembers each reader's choice.
+  var size = 1.18;            // rem
+  var MIN = 0.95, MAX = 1.55, STEP = 0.09;
+  function applySize() {
+    document.documentElement.style.setProperty('--reading', size.toFixed(2) + 'rem');
+  }
+  document.getElementById('fontUp').addEventListener('click', function () {
+    size = Math.min(MAX, size + STEP); applySize();
+  });
+  document.getElementById('fontDown').addEventListener('click', function () {
+    size = Math.max(MIN, size - STEP); applySize();
+  });
+
+  // Theme toggle — in the real Astro build this also remembers the reader's choice.
+  var root = document.documentElement;
+  document.getElementById('themeToggle').addEventListener('click', function () {
+    root.setAttribute('data-theme', root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // Mock play button — pulses the ember. Real audio wires in here later.
+  var btn = document.getElementById('playBtn');
+  var icon = document.getElementById('playIcon');
+  var playing = false;
+  btn.addEventListener('click', function () {
+    playing = !playing;
+    btn.classList.toggle('playing', playing);
+    icon.innerHTML = playing
+      ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>'   // pause
+      : '<path d="M8 5v14l11-7z"/>';               // play
+  });
+</script>
+</body>
+</html>

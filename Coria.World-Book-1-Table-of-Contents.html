@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>remEMBER — Contents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#EBE0CA; --paper:#F3EBD8; --ink:#2C2419; --muted:#6E6048;
+    --ember:#B5531E; --rule:#D6C7A8; --ember-glow:transparent;
+  }
+  [data-theme="dark"] {
+    --bg:#14110C; --paper:#1D1812; --ink:#E9E0CC; --muted:#9C8E76;
+    --ember:#EE8A3E; --rule:#2E261B; --ember-glow:rgba(238,138,62,0.45);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Spectral',Georgia,serif; font-size:1.1rem; line-height:1.6;
+    transition:background .5s ease,color .5s ease; -webkit-font-smoothing:antialiased;
+  }
+
+  /* header */
+  .topbar {
+    position:sticky; top:0; z-index:10;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:12px 16px 10px;
+    background:linear-gradient(to bottom,var(--bg) 78%,transparent);
+  }
+  .brand {
+    font-family:'Fraunces',serif; font-size:.95rem; color:var(--muted);
+    text-decoration:none; white-space:nowrap; transition:color .3s ease;
+  }
+  .brand:hover { color:var(--ember); }
+  .brand .ember-word { color:var(--ember); }
+  [data-theme="dark"] .brand .ember-word { text-shadow:0 0 9px var(--ember-glow); }
+  .toggle {
+    display:inline-flex; align-items:center; gap:8px;
+    border:1px solid var(--rule); background:var(--paper); color:var(--muted);
+    border-radius:999px; padding:7px 12px; cursor:pointer;
+    font-family:'Spectral',serif; font-size:.82rem; letter-spacing:.04em; line-height:1;
+    transition:border-color .3s ease,color .3s ease;
+  }
+  .toggle:hover { border-color:var(--ember); color:var(--ember); }
+  .toggle:focus-visible { outline:2px solid var(--ember); outline-offset:2px; }
+  .toggle .dot { width:13px; height:13px; border-radius:50%; background:var(--ember);
+    box-shadow:0 0 0 var(--ember-glow); transition:box-shadow .4s ease; }
+  [data-theme="dark"] .toggle .dot { box-shadow:0 0 12px 1px var(--ember-glow); }
+  .toggle .label-dark { display:none; }
+  [data-theme="dark"] .toggle .label-dark { display:inline; }
+  [data-theme="dark"] .toggle .label-light { display:none; }
+
+  main { max-width:46rem; margin:0 auto; padding:6px 22px 80px; }
+  .eyebrow {
+    font-size:.78rem; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--muted); margin:16px 0 0;
+  }
+  .eyebrow .ember-word { color:var(--ember); }
+  [data-theme="dark"] .eyebrow .ember-word { text-shadow:0 0 10px var(--ember-glow); }
+  h1 {
+    font-family:'Fraunces',serif; font-weight:600;
+    font-size:clamp(2.4rem,11vw,3.4rem); line-height:1.04; margin:8px 0 6px;
+  }
+  .lede { color:var(--muted); font-style:italic; margin:0 0 24px; font-family:'Fraunces',serif; }
+  .ember-rule { border:none; height:1px; background:var(--rule); margin:0 0 14px; position:relative; }
+  .ember-rule::before {
+    content:""; position:absolute; left:0; top:-3px; width:7px; height:7px;
+    border-radius:50%; background:var(--ember); box-shadow:0 0 0 var(--ember-glow); transition:box-shadow .4s ease;
+  }
+  [data-theme="dark"] .ember-rule::before { box-shadow:0 0 12px 2px var(--ember-glow); }
+
+  /* the scalable list — one column on mobile, two on wide screens */
+  .toc { display:grid; gap:1px; }
+  @media (min-width:760px) { .toc { grid-template-columns:1fr 1fr; column-gap:34px; } }
+
+  .row {
+    display:flex; align-items:center; gap:10px;
+    border-bottom:1px solid var(--rule);
+    transition:background .2s ease;
+  }
+  .row:hover { background:var(--paper); }
+  .row-link {
+    display:flex; align-items:baseline; gap:12px;
+    flex:1; min-width:0;
+    padding:13px 0 13px 10px;
+    text-decoration:none; color:var(--ink);
+    transition:padding-left .2s ease;
+  }
+  .row:hover .row-link { padding-left:16px; }
+  .row-link .num {
+    font-family:'Fraunces',serif; font-style:italic; color:var(--ember);
+    font-size:.9rem; min-width:2.2rem; flex:0 0 auto;
+  }
+  .row-link .ttl { font-family:'Fraunces',serif; font-weight:600; flex:1; min-width:0; }
+  .row.current .ttl { color:var(--ember); }
+
+  /* inline song player */
+  .play {
+    flex:0 0 auto;
+    display:inline-flex; align-items:center; gap:7px;
+    margin-right:8px;
+    border:1px solid var(--rule); background:transparent;
+    color:var(--muted); border-radius:999px;
+    padding:6px 11px 6px 9px; cursor:pointer;
+    font-family:'Spectral',serif; font-size:.72rem; letter-spacing:.06em;
+    text-transform:uppercase; white-space:nowrap; line-height:1;
+    transition:border-color .25s ease, color .25s ease, box-shadow .4s ease;
+  }
+  .play:hover { border-color:var(--ember); color:var(--ember); }
+  .play:focus-visible { outline:2px solid var(--ember); outline-offset:2px; }
+  .play .glyph {
+    width:16px; height:16px; border-radius:50%;
+    display:grid; place-items:center;
+    background:var(--ember); color:#fff; font-size:.6rem; line-height:1;
+    box-shadow:0 0 0 var(--ember-glow); flex:0 0 auto;
+  }
+  [data-theme="dark"] .play .glyph { box-shadow:0 0 8px 1px var(--ember-glow); }
+  .play.playing { color:var(--ember); border-color:var(--ember); }
+  .play.playing .glyph { animation:pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse {
+    0%,100% { box-shadow:0 0 8px 1px var(--ember-glow); }
+    50%     { box-shadow:0 0 16px 4px var(--ember-glow); }
+  }
+
+  .more {
+    grid-column:1 / -1; text-align:center; color:var(--muted); font-style:italic;
+    padding:22px 0 0; font-size:.92rem;
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="#">← <span class="ember-word">Coria</span></a>
+    <button class="toggle" id="themeToggle" aria-label="Switch color theme">
+      <span class="dot"></span><span class="label-light">Light</span><span class="label-dark">Dark</span>
+    </button>
+  </div>
+
+  <main>
+    <p class="eyebrow">rem<span class="ember-word">EMBER</span> &nbsp;·&nbsp; Book One</p>
+    <h1>Contents</h1>
+    <p class="lede">Fifty chapters. Choose where to begin.</p>
+    <hr class="ember-rule" />
+
+    <nav class="toc" aria-label="All chapters">
+      <div class="row current">
+        <a class="row-link" href="coria-chapter-one.html"><span class="num">I</span><span class="ttl">Chapter One</span></a>
+        <button class="play" data-src="" aria-label="Play Blood Reigns"><span class="glyph">▶</span>Blood Reigns</button>
+      </div>
+      <div class="row">
+        <a class="row-link" href="#"><span class="num">II</span><span class="ttl">Chapter Two</span></a>
+        <button class="play" data-src="" aria-label="Play chapter two song"><span class="glyph">▶</span>Track 02</button>
+      </div>
+      <div class="row">
+        <a class="row-link" href="#"><span class="num">III</span><span class="ttl">Chapter Three</span></a>
+        <button class="play" data-src="" aria-label="Play chapter three song"><span class="glyph">▶</span>Track 03</button>
+      </div>
+      <div class="row"><a class="row-link" href="#"><span class="num">IV</span><span class="ttl">Chapter Four</span></a></div>
+      <div class="row"><a class="row-link" href="#"><span class="num">V</span><span class="ttl">Chapter Five</span></a></div>
+      <div class="row"><a class="row-link" href="#"><span class="num">VI</span><span class="ttl">Chapter Six</span></a></div>
+      <div class="row"><a class="row-link" href="#"><span class="num">VII</span><span class="ttl">Chapter Seven</span></a></div>
+      <div class="row"><a class="row-link" href="#"><span class="num">VIII</span><span class="ttl">Chapter Eight</span></a></div>
+      <div class="row"><a class="row-link" href="#"><span class="num">IX</span><span class="ttl">Chapter Nine</span></a></div>
+      <div class="row"><a class="row-link" href="#"><span class="num">X</span><span class="ttl">Chapter Ten</span></a></div>
+      <div class="row"><a class="row-link" href="#"><span class="num">XI</span><span class="ttl">Chapter Eleven</span></a></div>
+      <div class="row"><a class="row-link" href="#"><span class="num">XII</span><span class="ttl">Chapter Twelve</span></a></div>
+      <p class="more">… chapters thirteen through fifty continue here, same rhythm all the way down ↓</p>
+    </nav>
+  </main>
+
+<script>
+  var root = document.documentElement;
+  document.getElementById('themeToggle').addEventListener('click', function () {
+    root.setAttribute('data-theme', root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // Inline song play — album behavior: starting one stops the others.
+  // Drop a real audio URL into each button's data-src="" and it plays for real.
+  var current = null;   // currently active button
+  var audio = null;     // the Audio object in play
+
+  function stopCurrent() {
+    if (current) {
+      current.classList.remove('playing');
+      current.querySelector('.glyph').textContent = '▶';
+    }
+    if (audio) { audio.pause(); audio = null; }
+    current = null;
+  }
+
+  document.querySelectorAll('.play').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();   // don't follow the chapter link
+      e.stopPropagation();
+      if (current === btn) { stopCurrent(); return; }  // tapping the playing one = pause
+      stopCurrent();
+      current = btn;
+      btn.classList.add('playing');
+      btn.querySelector('.glyph').textContent = '❚❚';
+      var src = btn.getAttribute('data-src');
+      if (src) {                       // real audio once you add the URL
+        audio = new Audio(src);
+        audio.play();
+        audio.onended = stopCurrent;
+      }
+      // no src yet → just the visual pulse, so you can feel the behavior
+    });
+  });
+</script>
+</body>
+</html>
